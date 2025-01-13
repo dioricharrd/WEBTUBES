@@ -1,53 +1,48 @@
 <script setup>
-// Import ref dan lifecycle hooks
-import { ref, onMounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import api from "../../api";
+// Import ref dan router
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
-// Inisialisasi router dan route
+// Import API
+import api from "../../api/index.js";
+
+// State untuk form input
+const name = ref("");
+const description = ref("");
+const price = ref("");
+const villa_id = ref("");
+const errors = ref({});
+
+// Status loading
+const isLoading = ref(false);
+
+// Ambil router
 const router = useRouter();
-const route = useRoute();
 
-// State untuk form input dan error
-const form = ref({
-  name: "",
-  description: "",
-  price: "",
-  capacity: "",
-});
+// Fungsi untuk menambahkan layanan transportasi baru
+const createTransportationService = async () => {
+  isLoading.value = true; // Set status loading saat mengirim permintaan
 
-const errors = ref({}); // Default error object kosong
-
-// Fetch data villa saat komponen dimount
-onMounted(async () => {
   try {
-    const { data } = await api.get(`/villas/${route.params.id}`);
-    // Assign data ke form
-    form.value = {
-      name: data.data.name || "",
-      description: data.data.description || "",
-      price: data.data.price || "",
-      capacity: data.data.capacity || "",
+    const serviceData = {
+      name: name.value,
+      description: description.value,
+      price: price.value,
+      villa_id: villa_id.value,
     };
-  } catch (error) {
-    console.error("Error fetching villa data:", error);
-  }
-});
 
-// Fungsi untuk mengupdate villa
-const updateVilla = async () => {
-  try {
-    // Kirim request update data
-    await api.put(`/villas/${route.params.id}`, form.value);
-    // Redirect ke halaman daftar villa setelah sukses
-    router.push("/villas");
+    const response = await api.post("/transportation-services", serviceData);
+
+    // Arahkan ke halaman daftar layanan transportasi setelah berhasil ditambahkan
+    router.push({ name: "transportation-services.index" });
   } catch (error) {
-    // Tangkap error validasi dan assign ke state errors
-    if (error.response?.data?.errors) {
+    if (error.response && error.response.data.errors) {
       errors.value = error.response.data.errors;
     } else {
-      console.error("Unexpected error occurred:", error);
+      console.error("Terjadi kesalahan saat menambahkan layanan transportasi:", error);
     }
+  } finally {
+    isLoading.value = false; // Set status loading menjadi false setelah permintaan selesai
   }
 };
 </script>
@@ -56,66 +51,74 @@ const updateVilla = async () => {
   <div class="container mt-5 mb-5">
     <div class="row justify-content-center">
       <div class="col-md-8">
-        <div class="card rounded shadow-lg form-card">
+        <div class="card border-0 rounded shadow-lg form-card">
           <!-- Header -->
           <div class="card-header text-white text-center fs-4 fw-bold form-header">
-            <i class="bi bi-pencil-square me-2"></i> Edit Villa
+            <i class="bi bi-plus-circle me-2"></i> Add New Transportation Service
           </div>
           <div class="card-body form-body">
-            <form @submit.prevent="updateVilla">
-              <!-- Input Name -->
-              <div class="mb-4">
-                <label class="form-label fw-bold form-label">Name</label>
+            <form @submit.prevent="createTransportationService">
+              <!-- Name Field -->
+              <div class="mb-3">
+                <label for="name" class="form-label fw-bold form-label">Service Name</label>
                 <input
-                  v-model="form.name"
+                  id="name"
                   type="text"
+                  v-model="name"
                   class="form-control form-input"
-                  placeholder="Enter villa name"
+                  placeholder="Enter service name"
+                  required
                 />
                 <div v-if="errors.name" class="text-danger mt-1 error-text">
                   <i class="bi bi-exclamation-circle-fill me-1"></i>{{ errors.name[0] }}
                 </div>
               </div>
 
-              <!-- Input Description -->
-              <div class="mb-4">
-                <label class="form-label fw-bold form-label">Description</label>
+              <!-- Description Field -->
+              <div class="mb-3">
+                <label for="description" class="form-label fw-bold form-label">Description</label>
                 <textarea
-                  v-model="form.description"
+                  id="description"
+                  v-model="description"
                   class="form-control form-input"
+                  placeholder="Enter service description"
                   rows="4"
-                  placeholder="Enter villa description"
+                  required
                 ></textarea>
                 <div v-if="errors.description" class="text-danger mt-1 error-text">
                   <i class="bi bi-exclamation-circle-fill me-1"></i>{{ errors.description[0] }}
                 </div>
               </div>
 
-              <!-- Input Price -->
-              <div class="mb-4">
-                <label class="form-label fw-bold form-label">Price</label>
+              <!-- Price Field -->
+              <div class="mb-3">
+                <label for="price" class="form-label fw-bold form-label">Price</label>
                 <input
-                  v-model="form.price"
+                  id="price"
                   type="number"
+                  v-model="price"
                   class="form-control form-input"
-                  placeholder="Enter villa price"
+                  placeholder="Enter service price"
+                  required
                 />
                 <div v-if="errors.price" class="text-danger mt-1 error-text">
                   <i class="bi bi-exclamation-circle-fill me-1"></i>{{ errors.price[0] }}
                 </div>
               </div>
 
-              <!-- Input Capacity -->
-              <div class="mb-4">
-                <label class="form-label fw-bold form-label">Capacity</label>
+              <!-- Villa ID Field -->
+              <div class="mb-3">
+                <label for="villa_id" class="form-label fw-bold form-label">Villa ID</label>
                 <input
-                  v-model="form.capacity"
+                  id="villa_id"
                   type="number"
+                  v-model="villa_id"
                   class="form-control form-input"
-                  placeholder="Enter villa capacity"
+                  placeholder="Enter villa ID"
+                  required
                 />
-                <div v-if="errors.capacity" class="text-danger mt-1 error-text">
-                  <i class="bi bi-exclamation-circle-fill me-1"></i>{{ errors.capacity[0] }}
+                <div v-if="errors.villa_id" class="text-danger mt-1 error-text">
+                  <i class="bi bi-exclamation-circle-fill me-1"></i>{{ errors.villa_id[0] }}
                 </div>
               </div>
 
@@ -124,8 +127,10 @@ const updateVilla = async () => {
                 <button
                   type="submit"
                   class="btn btn-lg rounded shadow-sm btn-submit"
+                  :disabled="isLoading"
                 >
-                  <i class="bi bi-save me-2"></i> Update Villa
+                  <i class="bi bi-save me-2"></i> Add Service
+                  <span v-if="isLoading" class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>
                 </button>
               </div>
             </form>
