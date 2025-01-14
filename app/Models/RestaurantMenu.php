@@ -6,5 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RestaurantMenu extends Model
 {
-    //
+    protected $guarded = [
+        'id'
+    ];
 }
