@@ -48,17 +48,25 @@
                                 STAFF
                             </router-link>
                         </li>
-                        <!-- New Transportation Button -->
+                        <!-- Transportation Menu -->
                         <li class="nav-item">
                             <router-link :to="{ name: 'transportation-services.index' }" class="nav-link" active-class="active">
                                 <i class="bi bi-car-front me-1"></i>
                                 TRANSPORTATION
                             </router-link>
                         </li>
+
+                        <!-- Button to Review -->
+                        <li class="nav-item">
+                            <router-link :to="{ name: 'reviews.index' }" class="btn btn-outline-light" active-class="active">
+                                <i class="bi bi-star me-1"></i> REVIEW
+                            </router-link>
+                        </li>
                     </ul>
                 </div>
             </div>
         </nav>
+
         <!-- Router View -->
         <router-view></router-view>
     </div>

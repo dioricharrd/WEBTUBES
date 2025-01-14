@@ -10,6 +10,23 @@ const routes = [
         component: () => import( /* webpackChunkName: "home" */ '../views/home.vue')
     },
 
+    // Staff Routes
+    {
+        path: '/staffs',
+        name: 'staffs.index',
+        component: () => import( /*webpackChunkName: "staffs.index" */ '../views/Staff/index.vue') // Daftar Staff
+    },
+    {
+        path: '/staffs/create',
+        name: 'staffs.create',
+        component: () => import( /*webpackChunkName: "staffs.create" */ '../views/Staff/create.vue') // Form Penambahan Staff
+    },
+    {
+        path: '/staffs/edit/:id',
+        name: 'staffs.edit',
+        component: () => import( /*webpackChunkName: "staffs.edit" */ '../views/Staff/edit.vue') // Form edit staff
+    },
+
     // Transportation Routes
     {
         path: '/transportation-services',
@@ -78,21 +95,21 @@ const routes = [
         component: () => import( /* webpackChunkName: "menus.index" */ '../views/Resto/edit.vue') // Form edit menu
     },
 
-    // Staff Routes
+    // Review Routes (New Route)
     {
-        path: '/staffs',
-        name: 'staffs.index',
-        component: () => import( /*webpackChunkName: "staffs.index" */ '../views/Staff/index.vue') // Daftar Staff
+        path: '/reviews',
+        name: 'reviews.index',
+        component: () => import( /* webpackChunkName: "reviews.index" */ '../views/Review/index.vue') // Daftar review
     },
     {
-        path: '/staffs/create',
-        name: 'staffs.create',
-        component: () => import( /*webpackChunkName: "staffs.create" */ '../views/Staff/create.vue') // Form Penambahan Staff
+        path: '/reviews/create',
+        name: 'reviews.create',
+        component: () => import( /* webpackChunkName: "reviews.create" */ '../views/Review/create.vue') // Form tambah review
     },
     {
-        path: '/staffs/edit/:id',
-        name: 'staffs.edit',
-        component: () => import( /*webpackChunkName: "staffs.edit" */ '../views/Staff/edit.vue') // Form edit staff
+        path: '/reviews/edit/:id',
+        name: 'reviews.edit',
+        component: () => import( /* webpackChunkName: "reviews.edit" */ '../views/Review/edit.vue') // Form edit review
     }
 ];
 

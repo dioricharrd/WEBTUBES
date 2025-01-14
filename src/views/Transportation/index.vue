@@ -1,20 +1,20 @@
 <script setup>
-// Import ref, onMounted, dan router
+// Import ref, onMounted, and router
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
 // Import API
 import api from "../../api/index.js";
 
-// State untuk menyimpan data layanan transportasi
+// State for storing transportation service data
 const transportationServices = ref([]);
 const isLoading = ref(false);
 const errors = ref({});
 
-// Ambil router
+// Router for navigation
 const router = useRouter();
 
-// Fungsi untuk memuat daftar layanan transportasi
+// Function to load transportation services
 const loadTransportationServices = async () => {
   isLoading.value = true;
 
@@ -22,26 +22,26 @@ const loadTransportationServices = async () => {
     const response = await api.get("/transportation-services");
     transportationServices.value = response.data;
   } catch (error) {
-    console.error("Terjadi kesalahan saat mengambil data layanan transportasi:", error);
+    console.error("Error fetching transportation services:", error);
   } finally {
     isLoading.value = false;
   }
 };
 
-// Fungsi untuk menghapus layanan transportasi
+// Function to delete transportation service
 const deleteTransportationService = async (id) => {
   const confirmDelete = confirm("Are you sure you want to delete this service?");
   if (confirmDelete) {
     try {
       await api.delete(`/transportation-services/${id}`);
-      loadTransportationServices(); // Reload data setelah menghapus
+      loadTransportationServices(); // Reload data after deletion
     } catch (error) {
-      console.error("Terjadi kesalahan saat menghapus layanan:", error);
+      console.error("Error deleting transportation service:", error);
     }
   }
 };
 
-// Panggil fungsi untuk memuat data saat komponen dimuat
+// Call the function to load data when the component is mounted
 onMounted(loadTransportationServices);
 </script>
 
@@ -78,34 +78,34 @@ onMounted(loadTransportationServices);
 
             <!-- Table with Data -->
             <div v-if="!isLoading && transportationServices.length > 0">
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th scope="col">Service Name</th>
-        <th scope="col">Description</th>
-        <th scope="col">Price</th>
-        <th scope="col">Villa</th>
-        <th scope="col" class="text-center">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="service in transportationServices" :key="service.id">
-        <td>{{ service.name }}</td>
-        <td>{{ service.description }}</td>
-        <td>{{ service.price | currency }}</td>
-        <td>{{ service.villa_id }}</td>
-        <td class="text-center">
-          <button
-            @click="router.push({ name: 'transportation-services.edit', params: { id: service.id } })"
-            class="btn btn-sm btn-warning me-2"
-          >
-            <i class="bi bi-pencil"></i> Edit
-          </button>
-          <button
-            @click="deleteTransportationService(service.id)"
-            class="btn btn-sm btn-danger"
-          >
-            <i class="bi bi-trash"></i> Delete
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">Service Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Villa</th>
+                    <th scope="col" class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="service in transportationServices" :key="service.id">
+                    <td>{{ service.name }}</td>
+                    <td>{{ service.description }}</td>
+                    <td>{{ service.price | currency }}</td>
+                    <td>{{ service.villa_id }}</td>
+                    <td class="text-center">
+                      <button
+                        @click="router.push({ name: 'transportation-services.edit', params: { id: service.id } })"
+                        class="btn btn-sm btn-warning me-2"
+                      >
+                        <i class="bi bi-pencil"></i> Edit
+                      </button>
+                      <button
+                        @click="deleteTransportationService(service.id)"
+                        class="btn btn-sm btn-danger"
+                      >
+                        <i class="bi bi-trash"></i> Delete
                       </button>
                     </td>
                   </tr>

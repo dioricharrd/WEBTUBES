@@ -1,27 +1,30 @@
 <script setup>
-// Import ref dan router
+// Import ref, onMounted, and router
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 // Import API
-import api from "../../api/index.js";
+import api from "../../api/index.js"; // Updated path to match the "Transportation" folder
 
-// State untuk form input
+// State for form inputs
 const name = ref("");
 const description = ref("");
 const price = ref("");
 const villa_id = ref("");
 const errors = ref({});
 
-// Status loading
+// State to hold newly created service data
+const createdService = ref(null);
+
+// Loading state
 const isLoading = ref(false);
 
-// Ambil router
+// Router for navigation
 const router = useRouter();
 
-// Fungsi untuk menambahkan layanan transportasi baru
+// Function to create new transportation service
 const createTransportationService = async () => {
-  isLoading.value = true; // Set status loading saat mengirim permintaan
+  isLoading.value = true; // Set loading state to true when sending request
 
   try {
     const serviceData = {
@@ -33,16 +36,19 @@ const createTransportationService = async () => {
 
     const response = await api.post("/transportation-services", serviceData);
 
-    // Arahkan ke halaman daftar layanan transportasi setelah berhasil ditambahkan
+    // Store the created service in the createdService state
+    createdService.value = response.data;
+
+    // Redirect to transportation service list after successful creation
     router.push({ name: "transportation-services.index" });
   } catch (error) {
     if (error.response && error.response.data.errors) {
       errors.value = error.response.data.errors;
     } else {
-      console.error("Terjadi kesalahan saat menambahkan layanan transportasi:", error);
+      console.error("Error adding transportation service:", error);
     }
   } finally {
-    isLoading.value = false; // Set status loading menjadi false setelah permintaan selesai
+    isLoading.value = false; // Set loading state to false after request is completed
   }
 };
 </script>
@@ -60,13 +66,13 @@ const createTransportationService = async () => {
             <form @submit.prevent="createTransportationService">
               <!-- Name Field -->
               <div class="mb-3">
-                <label for="name" class="form-label fw-bold form-label">Service Name</label>
+                <label for="name" class="form-label fw-bold form-label">Name</label>
                 <input
                   id="name"
                   type="text"
                   v-model="name"
                   class="form-control form-input"
-                  placeholder="Enter service name"
+                  placeholder="Enter transportation service name"
                   required
                 />
                 <div v-if="errors.name" class="text-danger mt-1 error-text">
@@ -82,7 +88,6 @@ const createTransportationService = async () => {
                   v-model="description"
                   class="form-control form-input"
                   placeholder="Enter service description"
-                  rows="4"
                   required
                 ></textarea>
                 <div v-if="errors.description" class="text-danger mt-1 error-text">
@@ -98,7 +103,7 @@ const createTransportationService = async () => {
                   type="number"
                   v-model="price"
                   class="form-control form-input"
-                  placeholder="Enter service price"
+                  placeholder="Enter price"
                   required
                 />
                 <div v-if="errors.price" class="text-danger mt-1 error-text">
@@ -108,13 +113,13 @@ const createTransportationService = async () => {
 
               <!-- Villa ID Field -->
               <div class="mb-3">
-                <label for="villa_id" class="form-label fw-bold form-label">Villa ID</label>
+                <label for="villa_id" class="form-label fw-bold form-label">Villa</label>
                 <input
                   id="villa_id"
                   type="number"
                   v-model="villa_id"
                   class="form-control form-input"
-                  placeholder="Enter villa ID"
+                  placeholder="Enter associated villa ID"
                   required
                 />
                 <div v-if="errors.villa_id" class="text-danger mt-1 error-text">
@@ -134,6 +139,15 @@ const createTransportationService = async () => {
                 </button>
               </div>
             </form>
+
+            <!-- Display Created Service -->
+            <div v-if="createdService" class="mt-4 alert alert-success">
+              <h5 class="alert-heading">Transportation Service Created!</h5>
+              <p><strong>Name:</strong> {{ createdService.name }}</p>
+              <p><strong>Description:</strong> {{ createdService.description }}</p>
+              <p><strong>Price:</strong> ${{ createdService.price }}</p>
+              <p><strong>Villa ID:</strong> {{ createdService.villa_id }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -206,5 +220,11 @@ const createTransportationService = async () => {
   background: linear-gradient(45deg, #eacda3, #e6b980);
   color: black;
   transform: translateY(-2px);
+}
+
+/* Success Message Styling */
+.alert-success {
+  background-color: #28a745;
+  color: white;
 }
 </style>
