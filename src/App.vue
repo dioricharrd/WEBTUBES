@@ -58,7 +58,7 @@
 
                         <!-- Button to Review -->
                         <li class="nav-item">
-                            <router-link :to="{ name: 'reviews.index' }" class="btn btn-outline-light" active-class="active">
+                            <router-link :to="{ name: 'reviews.index' }" class="nav-link" active-class="active">
                                 <i class="bi bi-star me-1"></i> REVIEW
                             </router-link>
                         </li>
